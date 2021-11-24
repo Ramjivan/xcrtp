@@ -1,0 +1,29 @@
+version: "3.3"
+
+services:
+  relay:
+    image: uk-london-1.ocir.io/lrqqxehccngb/streamway-injest:v1
+    networks:
+      - traefik-public
+    environment:
+      RTMP_PUSH_URLS: "rtmp://gopal.streamway.in/live/injest"
+      INJEST_API_HOST": "http://host.docker.internal:3000"
+
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+    deploy:
+      labels:
+        - traefik.enable=true
+        - traefik.docker.network=traefik-public
+        - traefik.constraint-label=traefik-public
+        - traefik.tcp.routers.relayrtmp.entrypoints=rtmp
+        - traefik.tcp.routers.relayrtmp.rule=HostSNI(`test.streamway.in`)
+        - traefik.tcp.routers.relayrtmp.tls=true
+        - traefik.tcp.routers.relayrtmp.service=relayrtmp
+        - traefik.tcp.services.relayrtmp.loadbalancer.server.port=1935
+        - traefik.tcp.routers.relayrtmp.tls.certresolver=le
+
+networks:
+  traefik-public:
+    external: true

@@ -1,0 +1,27 @@
+version: "3.3"
+
+services:
+  relay:
+    image: uk-london-1.ocir.io/lrqqxehccngb/streamway-relay:v1
+    networks:
+      - traefik-public
+    environment:
+      PORT: "1935"
+      LOCAL_STREAM: "live"
+      STREAMS: "rtmp://gopal.streamway.in/live/relay"
+    
+    deploy:
+      labels:
+        - traefik.enable=false
+        
+        
+        
+        
+        
+        
+        
+        
+
+networks:
+  traefik-public:
+    external: true
